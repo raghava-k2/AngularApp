@@ -1,0 +1,31 @@
+<p-card header="Card Details" subheader="Please provide 13 or 16 digit card number" [style]="{ width: '360px',
+margin:'auto',marginTop:'5rem' }">
+  <ng-template pTemplate="header">
+    <img alt="Card" src="https://primefaces.org/cdn/primeng/images/usercard.png" />
+  </ng-template>
+  <div class="card flex flex-column md:flex-column gap-3">
+    <div class="p-inputgroup">
+      <p-inputNumber placeholder="Card Number" inputId="integeronly" [(ngModel)]="card.number" [style]="{width:'100%'}"
+        [useGrouping]="false" (ngModelChange)="onChangeCardnumber($event)"> </p-inputNumber>
+      <span class="p-inputgroup-addon" [style]="{padding:'1px'}">
+        <img alt="Card" width="46" height="46"
+          src="../assets/mastercard-logo-icon-mastercard-incorporated-american-multinational-financial-services-corporation-headquartered-204759308.jpg" />
+      </span>
+    </div>
+    <div class="card flex flex-row md:flex-row gap-2">
+      <div class="p-inputgroup">
+        <p-inputNumber placeholder="CVV" [(ngModel)]="card.cvv" inputId="integeronly" [useGrouping]="false">
+        </p-inputNumber>
+      </div>
+      <div class="p-inputgroup">
+        <p-calendar [(ngModel)]="card.expiryDate" [showIcon]="true" placeholder="Expiry Date"
+          dateFormat="mm/yy"></p-calendar>
+      </div>
+    </div>
+  </div>
+  <ng-template pTemplate="footer">
+    <div [style]="{textAlign:'right'}">
+      <p-button [label]="operationType === 'new'?'Save':'Validate'" (click)="saveCard()"></p-button>
+    </div>
+  </ng-template>
+</p-card>

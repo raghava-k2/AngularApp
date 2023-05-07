@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Card } from './card';
 import { CardService } from './card.service';
@@ -10,17 +11,24 @@ import { CardService } from './card.service';
 })
 export class CardComponent implements OnInit {
 
-  card: Card = { expiryDate: null, type: '' };
+  cardForm: FormGroup = this.fb.group({
+    number: [null, Validators.required],
+    cvv: [null, Validators.required],
+    expiryDate: [null, Validators.required],
+    type: [null, Validators.required]
+  });
 
   operationType: string | null = "new";
 
-  constructor(private cardService: CardService, private route: ActivatedRoute) { }
+  constructor(private cardService: CardService, private route: ActivatedRoute, private fb: FormBuilder) { }
 
   ngOnInit(): void {
     this.operationType = this.route.snapshot.paramMap.get('operation');
     if ('card' in localStorage) {
       const oldcard: Card = JSON.parse(localStorage.getItem('card') as any);
-      this.card.number = window.atob(oldcard.number ?? '');
+      setTimeout(() => {
+        this.cardForm.get('number')?.setValue(window.atob(oldcard.number ?? ''));
+      }, 500);
     }
   }
 
@@ -38,8 +46,13 @@ export class CardComponent implements OnInit {
     console.log(error);
   }
 
+  isInvalid(controlName: string): boolean | undefined {
+    const status = (this.cardForm.get(controlName)?.status === 'INVALID' && this.cardForm.get(controlName)?.touched);
+    return status;
+  }
+
   saveCard() {
-    this.cardService.saveCard(this.card).subscribe({
+    this.cardService.saveCard(this.cardForm.getRawValue() as Card).subscribe({
       next: this.handleSave,
       error: this.handleError
     });
